@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: black
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 313c6cdbee751ee503023cf6350a0aef4e870313
+    rev: f44cdeaacdbc90747e5e1abc8e81bbb5be35eee6
     hooks:
       - id: ruff
   - repo: https://github.com/abravalheri/validate-pyproject
@@ -50,14 +50,6 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: requirements-txt-fixer
-  - repo: https://github.com/pre-commit/mirrors-pylint
-    rev: a1b176a5ee919967cf01e87c0222bd64b94fe0de
-    hooks:
-      - id: pylint
-        args:
-          - --max-line-length=120
-          - --ignore-imports=yes
-          - -d duplicate-code
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.9.0
     hooks:

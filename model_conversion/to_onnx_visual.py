@@ -1,19 +1,18 @@
 import argparse
 from pathlib import Path
-from torch import nn
 
 import clip
 import numpy as np
+import onnx
 import onnxruntime as ort
 import torch
 from onnxsim import simplify
-
-import onnx
+from torch import nn
 
 from model_conversion.utils import DEFAULT_EXPORT, SIZES, onnx_checker
 
 
-def convert_visual(model: nn.Module, dummy_input: torch.Tensor, visual_path: str):
+def convert_visual(model: nn.Module, dummy_input: torch.Tensor, visual_path: str) -> None:
     torch.onnx.export(model.visual, dummy_input, visual_path, **DEFAULT_EXPORT)
     onnx_checker(visual_path)
 
@@ -35,16 +34,16 @@ def main() -> None:
     size = SIZES[args.model]
 
     dummy_input_image = torch.randn(1, 3, size, size)
-    print("Converting visual model...")
     convert_visual(model, dummy_input_image, output_path)
 
     visual_model_onnx = onnx.load(output_path)  # type: ignore
 
-    print("Simplifying visual model...")
     model_simp_visual, visual_check = simplify(visual_model_onnx)
-    assert visual_check, "Simplified ONNX model could not be validated"
+
+    if not visual_check:
+        raise ValueError("Simplified ONNX model could not be validated")
+
     onnx.save(model_simp_visual, output_path)  # type: ignore
-    model_simp_visual = onnx.load(output_path)  # type: ignore
 
     ort_sess_visual = ort.InferenceSession(model_simp_visual.SerializeToString(), providers=["CUDAExecutionProvider"])
 
@@ -56,7 +55,7 @@ def main() -> None:
     with torch.inference_mode():
         default_visual_output = model.visual(dummy_input_image)
 
-    print(f"Visual {(default_visual_output - onnx_output_visual[0]).abs().max()}")
+    print("Visual %s ", {(default_visual_output - onnx_output_visual[0]).abs().max()})
 
 
 if __name__ == "__main__":
