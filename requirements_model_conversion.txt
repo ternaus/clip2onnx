@@ -1,0 +1,4 @@
+git+https://github.com/openai/CLIP.git
+torch>=1.13.1
+onnxsim>=0.4.10
+onnxruntime>=1.13.1
