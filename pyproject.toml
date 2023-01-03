@@ -32,7 +32,7 @@ line-length = 120
 
 # Enable Flake's "E" and "F" codes by default.
 select = ["F", "E", "W", "C90", "I", "D", "UP", "N", "YTT", "ANN", "S", "BLE", "B", "A", "C4", "T10", "ISC", "ICN", "Q", "RET", "SIM", "ARG", "DTZ", "ERA", "PGH", "PLC", "PLE", "PLR", "PLW", "RUF"]
-ignore = ["D100", "D101", "D102", "D103", "D107", "PGH003", "ARG003", "ANN101", "ANN401", "ANN102"]
+ignore = ["D100", "D101", "D102", "D103", "D104", "D107", "PGH003", "ARG003", "ANN101", "ANN401", "ANN102"]
 
 # Exclude a variety of commonly ignored directories.
 exclude = [".bzr",
