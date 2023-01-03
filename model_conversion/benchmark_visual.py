@@ -13,7 +13,7 @@ from model_conversion.utils import SIZES
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     arg = parser.add_argument
-    arg("-m", "--model", type=str, help="Path to model.", required=True, choices=SIZES.keys())
+    arg("-m", "--model", type=str, help="Model name.", required=True, choices=SIZES.keys())
     arg("-p", "--model_path", type=str, help="Path to model in onnx format.", required=True)
     return parser.parse_args()
 
