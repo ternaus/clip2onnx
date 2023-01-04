@@ -1,6 +1,6 @@
 git+https://github.com/openai/CLIP.git
 multilingual_clip>=1.0.10
-onnxruntime>=1.13.1
+onnxruntime-gpu>=1.13.1
 onnxsim>=0.4.10
 torch>=1.13.1
 transformers>=4.25.1
