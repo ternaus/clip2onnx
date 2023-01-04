@@ -28,7 +28,7 @@ def main() -> None:
 
     benchmark_torch(model.visual, dummy_input_image, args.num_rounds, "CPU")
     benchmark_torch(model.visual.cuda(), dummy_input_image.cuda(), args.num_rounds, "GPU")
-    benchmark_torch(model.visual.cuda(), dummy_input_image.cuda(), args.num_rounds, "GPU", "half")
+    benchmark_torch(model.visual.cuda(), dummy_input_image.cuda(), args.num_rounds, "GPU fp16", "half")
     benchmark_onnx(
         args.model_path, "CPUExecutionProvider", dummy_input_image.detach().cpu().numpy().astype(np.float32), "CPU"
     )

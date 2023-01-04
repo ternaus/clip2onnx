@@ -5,25 +5,16 @@ import onnxruntime as ort
 import torch
 
 
-def benchmark_onnx(model_path: str, provider: str, input_array: np.ndarray, device: str) -> None:
-    ort_sess = ort.InferenceSession(model_path, providers=[provider])
-
-    input_name = ort_sess.get_inputs()[0].name
-
-    result = []
-
-    for _ in range(10):
-        start_time = time.perf_counter()
-        _ = ort_sess.run(None, {input_name: input_array})
-        result += [time.perf_counter() - start_time]
-
-    print(
-        f"Default ONNX {device}: {np.mean(result): .3f}+-{np.std(result): .3f}",
-    )
+def prediction_torch(model: torch.nn.Module, x: dict[str, torch.Tensor] | torch.Tensor) -> None:
+    model(**x) if isinstance(x, dict) else model(x)
 
 
 def benchmark_torch(
-    model: torch.nn.Module, input_array: torch.Tensor, num_rounds: int, device: str, mode: str = "full"
+    model: torch.nn.Module,
+    x: dict[str, torch.Tensor] | torch.Tensor | np.ndarray,
+    num_rounds: int,
+    device: str,
+    mode: str = "full",
 ) -> None:
 
     print()
@@ -31,26 +22,48 @@ def benchmark_torch(
     if mode == "half":
         with torch.inference_mode(), torch.cuda.amp.autocast(enabled=True):
             for _ in range(num_rounds):
-                model(input_array)
+                prediction_torch(model, x)
 
             print(f"Compute {device}")
             result = []
 
             for _ in range(num_rounds):
                 start_time = time.perf_counter()
-                _ = model(input_array)
+                prediction_torch(model, x)
                 result += [time.perf_counter() - start_time]
     elif mode == "full":
         with torch.inference_mode():
             for _ in range(num_rounds):
-                model(input_array)
+                prediction_torch(model, x)
 
             print(f"Compute {device}")
             result = []
 
             for _ in range(num_rounds):
                 start_time = time.perf_counter()
-                _ = model(input_array)
+                prediction_torch(model, x)
                 result += [time.perf_counter() - start_time]
 
     print(f"Result {device}: {np.mean(result): .3f}+-{np.std(result): .3f}")
+
+
+def prediction_onnx(sesssion: ort.InferenceSession, x: dict[str, np.ndarray] | np.ndarray) -> None:
+    sesssion.run(None, x) if isinstance(x, dict) else sesssion.run(None, {"input": x})
+
+
+def benchmark_onnx(
+    model_path: str, provider: str, input_array: dict[str, np.ndarray] | np.ndarray, device: str
+) -> None:
+    print()
+    ort_sess = ort.InferenceSession(model_path, providers=[provider])
+
+    result = []
+
+    for _ in range(10):
+        start_time = time.perf_counter()
+        prediction_onnx(ort_sess, input_array)
+        result += [time.perf_counter() - start_time]
+
+    print(
+        f"ONNX {device}: {np.mean(result): .3f}+-{np.std(result): .3f}",
+    )

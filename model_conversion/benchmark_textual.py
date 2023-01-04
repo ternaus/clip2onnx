@@ -24,7 +24,7 @@ def main() -> None:
 
     benchmark_torch(textual, dummy_input_text, args.num_rounds, "CPU")
     benchmark_torch(textual.cuda(), dummy_input_text.cuda(), args.num_rounds, "GPU")
-    benchmark_torch(textual.cuda(), dummy_input_text.cuda(), args.num_rounds, "GPU", "half")
+    benchmark_torch(textual.cuda(), dummy_input_text.cuda(), args.num_rounds, "GPU fp16", "half")
     benchmark_onnx(args.model_path, "CPUExecutionProvider", dummy_input_text.detach().cpu().numpy(), "CPU")
     benchmark_onnx(args.model_path, "CUDAExecutionProvider", dummy_input_text.detach().cpu().numpy(), "GPU")
 
