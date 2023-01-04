@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: black
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: f44cdeaacdbc90747e5e1abc8e81bbb5be35eee6
+    rev: fd50e8507a86bca9092a843b0408548f4b85f168
     hooks:
       - id: ruff
   - repo: https://github.com/abravalheri/validate-pyproject

@@ -9,8 +9,7 @@ import torch
 from onnxsim import simplify
 from torch import nn
 
-from model_conversion.textual import Textual
-from model_conversion.utils import DEFAULT_EXPORT, SIZES, onnx_checker
+from model_conversion.utils import DEFAULT_EXPORT, SIZES, Textual, onnx_checker
 
 
 def convert_textual(model: nn.Module, dummy_input: torch.Tensor, textual_path: str) -> None:
