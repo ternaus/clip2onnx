@@ -21,6 +21,8 @@ def benchmark_torch(
 
     if mode == "half":
         with torch.inference_mode(), torch.cuda.amp.autocast(enabled=True):
+            if isinstance(x, torch.Tensor):
+                x = x.half()
             for _ in range(num_rounds):
                 prediction_torch(model, x)
 

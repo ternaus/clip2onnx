@@ -19,16 +19,19 @@ def get_args() -> argparse.Namespace:
 
 def main() -> None:
     args = get_args()
-    print("Load model")
-    model, _ = clip.load(args.model, "cpu")
+    print("Loading model CPU")
+    model_cpu, _ = clip.load(args.model, "cpu")
+
+    print("Loading model GPU")
+    model_gpu, _ = clip.load(args.model, "cuda")
 
     size = SIZES[args.model]
 
     dummy_input_image = torch.randn(1, 3, size, size)
 
-    benchmark_torch(model.visual, dummy_input_image, args.num_rounds, "CPU")
-    benchmark_torch(model.visual.cuda(), dummy_input_image.cuda(), args.num_rounds, "GPU")
-    benchmark_torch(model.visual.cuda(), dummy_input_image.cuda(), args.num_rounds, "GPU fp16", "half")
+    benchmark_torch(model_cpu.visual, dummy_input_image, args.num_rounds, "CPU")
+    benchmark_torch(model_cpu.visual.cuda(), dummy_input_image.cuda(), args.num_rounds, "GPU")
+    benchmark_torch(model_gpu.visual, dummy_input_image.cuda(), args.num_rounds, "GPU fp16", "half")
     benchmark_onnx(
         args.model_path, "CPUExecutionProvider", dummy_input_image.detach().cpu().numpy().astype(np.float32), "CPU"
     )

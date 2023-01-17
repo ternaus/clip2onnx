@@ -27,6 +27,7 @@ def get_args() -> argparse.Namespace:
 
 def main() -> None:
     args = get_args()
+    print("Loading the model")
     model, _ = clip.load(args.model, "cpu")
 
     output_path = args.output_path
@@ -34,15 +35,20 @@ def main() -> None:
     size = SIZES[args.model]
 
     dummy_input_image = torch.randn(1, 3, size, size)
+
+    print("Converting")
     convert_visual(model, dummy_input_image, output_path)
 
     visual_model_onnx = onnx.load(output_path)  # type: ignore
+
+    print("Simplifying")
 
     model_simp_visual, visual_check = simplify(visual_model_onnx)
 
     if not visual_check:
         raise ValueError("Simplified ONNX model could not be validated")
 
+    print("Saving simplified")
     onnx.save(model_simp_visual, output_path)  # type: ignore
 
     ort_sess_visual = ort.InferenceSession(model_simp_visual.SerializeToString(), providers=["CUDAExecutionProvider"])
@@ -50,8 +56,10 @@ def main() -> None:
     image_onnx = dummy_input_image.detach().cpu().numpy().astype(np.float32)
     input_name = ort_sess_visual.get_inputs()[0].name
 
+    print("Visual onnx inference")
     onnx_output_visual = ort_sess_visual.run(None, {input_name: image_onnx})
 
+    print("Visual inference")
     with torch.inference_mode():
         default_visual_output = model.visual(dummy_input_image)
 

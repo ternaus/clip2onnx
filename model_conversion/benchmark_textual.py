@@ -17,6 +17,7 @@ def get_args() -> argparse.Namespace:
 
 def main() -> None:
     args = get_args()
+    print("Loading model")
     model, _ = clip.load(args.model, "cpu")
 
     textual = Textual(model)

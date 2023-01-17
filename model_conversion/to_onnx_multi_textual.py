@@ -27,6 +27,7 @@ def main() -> None:
 
     txt_tok = tokenizer(texts, return_tensors="pt", padding="max_length", max_length=MAX_TEXT_LENGTH)
 
+    print("Loading")
     model = MultilingualCLIP.from_pretrained(MULTILANG_MODEL_NAME).eval()
 
     model = torch.jit.trace(model, (txt_tok["input_ids"], txt_tok["attention_mask"]), strict=True)
@@ -36,7 +37,7 @@ def main() -> None:
 
     input_names = ["input_ids", "attention_mask"]
     output_names = ["output"]
-
+    print("Exporting")
     torch.onnx.export(
         model,
         (txt_tok["input_ids"], txt_tok["attention_mask"]),  # texts,

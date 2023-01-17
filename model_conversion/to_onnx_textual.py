@@ -28,15 +28,18 @@ def get_args() -> argparse.Namespace:
 
 def main() -> None:
     args = get_args()
+    print("Loading the model")
     model, _ = clip.load(args.model, "cpu")
 
     output_path = args.output_path
 
     dummy_input_text = clip.tokenize(["Search for Generated Imagert at Ternaus.com"]).cpu()
+    print("Converting")
     convert_textual(model, dummy_input_text, output_path)
 
     textual_model_onnx = onnx.load(output_path)  # type: ignore
 
+    print("Simplifying")
     model_simp_textual, textual_check = simplify(textual_model_onnx)
 
     if not textual_check:

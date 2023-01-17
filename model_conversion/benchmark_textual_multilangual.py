@@ -28,9 +28,9 @@ def main() -> None:
 
     model = torch.jit.trace(model, (txt_tok["input_ids"], txt_tok["attention_mask"]), strict=True)
 
-    benchmark_torch(
-        model, {"input_ids": txt_tok["input_ids"], "attention_mask": txt_tok["attention_mask"]}, args.num_rounds, "CPU"
-    )
+    # benchmark_torch(
+    #     model, {"input_ids": txt_tok["input_ids"], "attention_mask": txt_tok["attention_mask"]}, args.num_rounds, "CPU"
+    # )
     benchmark_torch(
         model.cuda(),
         {"input_ids": txt_tok["input_ids"].cuda(), "attention_mask": txt_tok["attention_mask"].cuda()},
